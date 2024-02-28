@@ -16,7 +16,7 @@ available_architectures:
 param_container_name: "{{ project_name }}"
 param_usage_include_vols: true
 param_volumes:
-  - { vol_path: "/config", vol_host_path: "/path/to/smokeping/config", desc: "Configure the `Targets` file here" }
+  - { vol_path: "/config", vol_host_path: "/path/to/{{ project_name }}/config", desc: "Persistent config files" }
   - { vol_path: "/data", vol_host_path: "/path/to/smokeping/data", desc: "Storage location for db and application data (graphs etc)" }
 param_usage_include_ports: true
 param_ports:
@@ -28,12 +28,18 @@ param_env_vars:
 # application setup block
 app_setup_block_enabled: true
 app_setup_block: |
-  * Once running the URL will be `http://<host-ip>/smokeping/smokeping.cgi`. For example a full URL might look like `https://smokeping.yourdomain.com/smokeping/smokeping.cgi`.
-  * Basics are, edit the `Targets` file to ping the hosts you're interested in to match the format found there.
+  * Once running, the URL will be `http://<host-ip>/smokeping/smokeping.cgi`. For example, a full URL might look like `https://smokeping.yourdomain.com/smokeping/smokeping.cgi`.
+  * Basic setup: edit the `Targets` file to ping the hosts you're interested in to match the format found there.
   * Wait 10 minutes.
+  * To reload the configuration without restarting the container, run `docker exec smokeping pkill -f -HUP '/usr/bin/perl /usr/s?bin/smokeping(_cgi)?'`, where `smokeping` is the container ID.
+  * To restart the container, run `docker restart smokeping`, where `smokeping` is the container ID.
+  * Note that the default `Targets` file includes items that may or may not work. These are simply to provide examples of configuration.
 
 # changelog
 changelogs:
+  - { date: "23.12.23:", desc: "Rebase to Alpine 3.19."}
+  - { date: "29.11.23:", desc: "Bump tcpping to 1.8." }
+  - { date: "21.11.23:", desc: "Add support for IRTT Probes." }
   - { date: "23.07.23:", desc: "Add Authen::TacacsPlus for Tacacs+ support." }
   - { date: "16.05.23:", desc: "Add perl-authen-radius for Radius support." }
   - { date: "16.05.23:", desc: "Rebase to Alpine 3.18. Deprecate armhf." }
